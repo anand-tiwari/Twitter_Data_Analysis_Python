@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block content %}
+<div ng-controller="appController" ng-init="getResult()">
+    {% verbatim %}
+    <!-- section 1 for line - Graph -->
+    <div layout="row">
+        <div flex="60">
+            <div class="graph-display" style="margin-bottom:30px;">
+                <canvas id="bar" class="chart chart-bar" data="dateLine.data" labels="dateLine.labels" colours="dateLine.colours"></canvas>
+                <div class="fig_text" > fig. line graph for dates of month</div>
+            </div>
+        </div>
+        <div flex="40">
+            <div class="graph-display" style="margin-top: 135px;margin-bottom: 30px;">
+                <canvas id="bar" class="chart chart-bar" data="dayLine.data" labels="dayLine.labels" colours="dayLine.colours"></canvas>
+                <div class="fig_text" > fig. line graph of days</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- section 2 for pie-graph  -->
+    <div layout="row">
+        <div  zingchart id="chart-1" zc-json="pieGraphJson" zc-width="100%" zc-height="600px"></div>
+    </div>
+    <div class="fig_text"> Fig. pie Graph according to the location of Tweets </div>
+
+    <!-- section 3 for search box and datepicker  -->
+    <div layout="row" class="search_block">
+        <div flex="10"></div>
+        <div flex="30">
+            <md-input-container class="md-block">
+                <label>Search tweets </label>
+                <input ng-model="query">
+            </md-input-container>
+        </div>
+        <div flex="5"></div>
+        <div flex="25" layout="row" class="date_selector">
+            <div style="margin-top:14px;">From Date</div>
+            <md-datepicker ng-model="fromDate" md-placeholder="Enter date" md-open-on-focus></md-datepicker>
+        </div>
+        <div flex="30" layout="row" class="date_selector">
+            <div style="margin-top:14px;">To Date</div>
+            <md-datepicker ng-model="toDate" md-placeholder="Enter date" ></md-datepicker>
+        </div>
+    </div>
+
+    <!-- section 4 for table of content -->
+    <div>
+        <table>
+            <tr>
+                <th>User-Name</th>
+                <th>Description</th>
+                <th>Created on</th>
+                <th>Link</th>
+            </tr>
+            <tr ng-repeat="tweet in allData | filter: query | startFrom:currentPage*pageSize | limitTo:pageSize | myfilter: fromDate : toDate | orderBy : decreasing_date: true ">
+                <td>{{tweet.user.name}}</td>
+                <td>{{tweet.user.description}}</td>
+                <td>{{tweet.user.created_at | asDate | date:'MM/dd/yyyy'}}</td>
+                <td><a href="{{tweet.user.url}}" target="_blank">{{tweet.user.url}}</a></td>
+            </tr>
+        </table>
+        <div class="btn-group btn-group-xs" layout="row" style="margin: 20px 0px 30px 30%;">
+            <button ng-disabled="currentPage == 0" class="next_button" ng-click="currentPage=currentPage-1">
+            Previous</button>
+            <span class="page_number" >{{currentPage+1}}/{{numberOfPages()}}</span>
+            <button class="next_button" 
+                ng-click="loadNextPage()">Next
+            </button>
+        </div>
+    </div>
+    {% endverbatim %}
+</div>
+{% endblock %}
